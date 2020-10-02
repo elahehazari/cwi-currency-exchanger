@@ -1,16 +1,24 @@
 import { InputLabel, MenuItem, Select } from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
 import "./App.css";
+import axios from "axios";
 
-const coefficient = {
-  usd: 1,
-  cad: 1.3,
-  eur: 0.7,
-};
+const Container = styled.div`
+  background-color: gold;
+  margin: 20px;
+  width: 200px;
+`;
 
 function App() {
   const [fromCurrency, setFromCurrency] = useState("usd"); //hook
+  const [coefficient, setCoefficient] = useState({
+    usd: 1,
+    cad: 1.3,
+    eur: 0.7,
+  });
+
   const handleFromCurrencyChange = (event) => {
     const from = event.target.value;
     setFromCurrency(from);
@@ -33,11 +41,29 @@ function App() {
     setToAmount((from * coefficient[toCurrency]) / coefficient[fromCurrency]);
   };
 
+  useEffect(() => {
+    axios.get("https://api.exchangeratesapi.io/latest").then((result) => {
+      console.log("App -> result", result);
+      setCoefficient({
+        usd: result.data.rates.USD,
+        cad: result.data.rates.CAD,
+        eur: 1,
+      });
+    });
+  }, []);
+
+  // const getCurrencyColor = () => {
+  //   if (fromCurrency === "usd") return "green";
+  //   if (fromCurrency === "cad") return "gold";
+  //   if (fromCurrency === "eur") return "white";
+  //   return "blue;";
+  // };
+
   return (
     <div className="App">
       <header className="App-header">
         <form autoComplete="off">
-          <div>
+          <Container>
             <InputLabel id="from-currency-label">From</InputLabel>
             <Select
               labelId="from-currency-label"
@@ -50,8 +76,8 @@ function App() {
               <MenuItem value="cad">CAD</MenuItem>
               <MenuItem value="eur">EUR</MenuItem>
             </Select>
-          </div>
-          <div>
+          </Container>
+          <Container>
             <InputLabel id="to-currency-label">To</InputLabel>
             <Select
               labelId="to-currency-label"
@@ -64,8 +90,8 @@ function App() {
               <MenuItem value="cad">CAD</MenuItem>
               <MenuItem value="eur">EUR</MenuItem>
             </Select>
-          </div>
-          <div>
+          </Container>
+          <Container>
             <TextField
               id="from-amount"
               label="Amount"
@@ -74,8 +100,8 @@ function App() {
               type="number"
               onChange={handleFromAmountChange}
             />
-          </div>
-          <div>
+          </Container>
+          <Container>
             <TextField
               id="to-amount"
               label="Converted"
@@ -83,7 +109,7 @@ function App() {
               disabled
               value={toAmount}
             />
-          </div>
+          </Container>
         </form>
       </header>
     </div>
