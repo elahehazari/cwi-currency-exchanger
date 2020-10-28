@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import "./App.css";
 import axios from "axios";
-
+import Test from "./Test"
 const Container = styled.div`
   background-color: gold;
   margin: 20px;
@@ -62,6 +62,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
+        <Test />
         <form autoComplete="off">
           <Container>
             <InputLabel id="from-currency-label">From</InputLabel>
